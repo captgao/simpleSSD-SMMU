@@ -393,7 +393,7 @@ void FIFO::insertReadDoneNext() {
 }
 
 void FIFO::dmaRead(uint64_t addr, uint64_t size, uint8_t *buffer,
-                   DMAFunction &func, void *context) {
+                   DMAFunction &func, void *context, uint32_t sid = 0, uint32_t ssid = 0) {
   if (size == 0) {
     warn("FIFO: zero-size DMA read request. Ignore.");
 
@@ -406,7 +406,7 @@ void FIFO::dmaRead(uint64_t addr, uint64_t size, uint8_t *buffer,
 }
 
 void FIFO::dmaWrite(uint64_t addr, uint64_t size, uint8_t *buffer,
-                    DMAFunction &func, void *context) {
+                    DMAFunction &func, void *context, uint32_t sid = 0, uint32_t ssid = 0) {
   if (size == 0) {
     warn("FIFO: zero-size DMA write request. Ignore.");
 
