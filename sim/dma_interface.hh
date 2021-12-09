@@ -44,9 +44,9 @@ class DMAInterface {
   virtual ~DMAInterface() {}
 
   virtual void dmaRead(uint64_t, uint64_t, uint8_t *, DMAFunction &,
-                       void * = nullptr) = 0;
+                       void * = nullptr, uint32_t = 0, uint32_t = 0) = 0;
   virtual void dmaWrite(uint64_t, uint64_t, uint8_t *, DMAFunction &,
-                        void * = nullptr) = 0;
+                        void * = nullptr, uint32_t = 0, uint32_t = 0) = 0;
 };
 
 }  // namespace SimpleSSD
