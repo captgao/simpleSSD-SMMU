@@ -125,9 +125,9 @@ class FIFO : public DMAInterface {
   ~FIFO();
 
   void dmaRead(uint64_t, uint64_t, uint8_t *, DMAFunction &,
-               void * = nullptr) override;
+               void * = nullptr, uint32_t = 0, uint32_t = 0) override;
   void dmaWrite(uint64_t, uint64_t, uint8_t *, DMAFunction &,
-                void * = nullptr) override;
+                void * = nullptr, uint32_t = 0, uint32_t = 0) override;
 };
 
 }  // namespace SimpleSSD
