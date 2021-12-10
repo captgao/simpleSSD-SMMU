@@ -54,8 +54,12 @@ struct FIFOEntry {
   DMAFunction func;
   void *context;
 
+  uint32_t sid;
+  uint32_t ssid;
+
   FIFOEntry();
-  FIFOEntry(uint64_t, uint64_t, uint8_t *, DMAFunction &, void *);
+  FIFOEntry(uint64_t, uint64_t, uint8_t *, DMAFunction &, void *
+    , uint32_t = 0, uint32_t = 0);
 };
 
 struct ReadEntry {

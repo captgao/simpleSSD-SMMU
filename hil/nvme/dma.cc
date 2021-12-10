@@ -38,13 +38,13 @@ DMAInterface::DMAInterface(ConfigData &cfg, DMAFunction &f, void *c)
       allocate([this](uint64_t now) { initFunction(now, context); });
 }
 
-DMAInterface::DMAInterface(ConfigData &cfg, DMAFunction &f, void *c, uint32_t sid, uint32_t ssid)
+DMAInterface::DMAInterface(ConfigData &cfg, DMAFunction &f, void *c, uint32_t _sid, uint32_t _ssid)
     : pInterface(cfg.pInterface),
       initFunction(f),
       callCounter(0),
       context(c),
-      sid(sid),
-      ssid(ssid),
+      sid(_sid),
+      ssid(_ssid),
       dmaHandler(commonDMAHandler) {
   immediateEvent =
       allocate([this](uint64_t now) { initFunction(now, context); });
