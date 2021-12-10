@@ -509,7 +509,7 @@ void SGL::write(uint64_t offset, uint64_t length, uint8_t *buffer,
           writeContext->counter++;
           pInterface->dmaWrite(iter.addr, written,
                                buffer ? buffer + totalWritten : NULL,
-                               dmaHandler, writeContext);
+                               dmaHandler, writeContext, sid, ssid);
         }
 
         totalWritten += written;
@@ -527,7 +527,7 @@ void SGL::write(uint64_t offset, uint64_t length, uint8_t *buffer,
         if (!iter.ignore) {
           writeContext->counter++;
           pInterface->dmaWrite(iter.addr + totalWritten, written, buffer,
-                               dmaHandler, writeContext);
+                               dmaHandler, writeContext, sid, ssid);
         }
 
         totalWritten = written;
