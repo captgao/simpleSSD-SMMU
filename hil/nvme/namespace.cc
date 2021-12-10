@@ -363,12 +363,12 @@ void Namespace::write(SQEntryWrapper &req, RequestFunction &func) {
 
     if (req.useSGL) {
       pContext->dma =
-          new SGL(cfgdata, cpuHandler, pCPU, req.entry.data1, req.entry.data2);
+          new SGL(cfgdata, cpuHandler, pCPU, req.entry.data1, req.entry.data2, 0, 2);
     }
     else {
       pContext->dma =
           new PRPList(cfgdata, cpuHandler, pCPU, req.entry.data1,
-                      req.entry.data2, (uint64_t)nlb * info.lbaSize);
+                      req.entry.data2, (uint64_t)nlb * info.lbaSize, 0, 3);
     }
   }
   else {
@@ -455,12 +455,12 @@ void Namespace::read(SQEntryWrapper &req, RequestFunction &func) {
 
     if (req.useSGL) {
       pContext->dma =
-          new SGL(cfgdata, cpuHandler, pCPU, req.entry.data1, req.entry.data2);
+          new SGL(cfgdata, cpuHandler, pCPU, req.entry.data1, req.entry.data2, 0, 1);
     }
     else {
       pContext->dma =
           new PRPList(cfgdata, cpuHandler, pCPU, req.entry.data1,
-                      req.entry.data2, pContext->nlb * info.lbaSize);
+                      req.entry.data2, pContext->nlb * info.lbaSize, 0, 2);
     }
   }
   else {
@@ -560,12 +560,12 @@ void Namespace::compare(SQEntryWrapper &req, RequestFunction &func) {
 
     if (req.useSGL) {
       pContext->dma =
-          new SGL(cfgdata, cpuHandler, pCPU, req.entry.data1, req.entry.data2, 0, 1);
+          new SGL(cfgdata, cpuHandler, pCPU, req.entry.data1, req.entry.data2);
     }
     else {
       pContext->dma =
           new PRPList(cfgdata, cpuHandler, pCPU, req.entry.data1,
-                      req.entry.data2, pContext->nlb * info.lbaSize, 0, 2);
+                      req.entry.data2, pContext->nlb * info.lbaSize);
     }
   }
   else {
