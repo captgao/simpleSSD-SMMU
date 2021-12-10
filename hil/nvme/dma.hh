@@ -56,9 +56,11 @@ class DMAInterface {
 
   DMAFunction dmaHandler;
   static void commonDMAHandler(uint64_t, void *);
-
+  uint32_t sid = 0;
+  uint32_t ssid = 0;
  public:
   DMAInterface(ConfigData &, DMAFunction &, void *);
+  DMAInterface(ConfigData &, DMAFunction &, void *, uint32_t, uint32_t);
   virtual ~DMAInterface();
 
   virtual void read(uint64_t, uint64_t, uint8_t *, DMAFunction &,
@@ -92,7 +94,7 @@ class PRPList : public DMAInterface {
   uint64_t getPRPSize(uint64_t);
 
  public:
-  PRPList(ConfigData &, DMAFunction &, void *, uint64_t, uint64_t, uint64_t);
+  PRPList(ConfigData &, DMAFunction &, void *, uint64_t, uint64_t, uint64_t, uint32_t = 0, uint32_t = 0);
   PRPList(ConfigData &, DMAFunction &, void *, uint64_t, uint64_t, bool);
   ~PRPList();
 
@@ -133,7 +135,7 @@ class SGL : public DMAInterface {
   void parseSGLSegment(uint64_t, uint32_t);
 
  public:
-  SGL(ConfigData &, DMAFunction &, void *, uint64_t, uint64_t);
+  SGL(ConfigData &, DMAFunction &, void *, uint64_t, uint64_t, uint32_t = 0, uint32_t = 0);
   ~SGL();
 
   void read(uint64_t, uint64_t, uint8_t *, DMAFunction &,
