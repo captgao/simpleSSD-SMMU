@@ -363,12 +363,12 @@ void Namespace::write(SQEntryWrapper &req, RequestFunction &func) {
 
     if (req.useSGL) {
       pContext->dma =
-          new SGL(cfgdata, cpuHandler, pCPU, req.entry.data1, req.entry.data2, 0, 2);
+          new SGL(cfgdata, cpuHandler, pCPU, req.entry.data1, req.entry.data2, 0, 3);
     }
     else {
       pContext->dma =
           new PRPList(cfgdata, cpuHandler, pCPU, req.entry.data1,
-                      req.entry.data2, (uint64_t)nlb * info.lbaSize, 0, 3);
+                      req.entry.data2, (uint64_t)nlb * info.lbaSize, 0, 4);
     }
   }
   else {
