@@ -190,6 +190,7 @@ void FIFO::transferWrite() {
 
 void FIFO::transferWriteDone() {
   auto &iter = writeQueue.transferQueue.front();
+  std::cout << "FIFO::transferWriteDone " << iter.sid << " " << iter.ssid << std::endl;
   uint64_t now = getTick();
   uint64_t latency =
       (iter.size < param.transferUnit) ? param.latency(iter.size) : unitLatency;
