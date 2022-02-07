@@ -228,7 +228,7 @@ void PRPList::read(uint64_t offset, uint64_t length, uint8_t *buffer,
         read = MIN(iter.size, length - totalRead);
         readContext->counter++;
         pInterface->dmaRead(iter.addr, read, buffer ? buffer + totalRead : NULL,
-                            dmaHandler, readContext);
+                            dmaHandler, readContext, sid, ssid);
         totalRead += read;
 
         if (totalRead == length) {
@@ -242,7 +242,7 @@ void PRPList::read(uint64_t offset, uint64_t length, uint8_t *buffer,
         read = MIN(iter.size - totalRead, length);
         readContext->counter++;
         pInterface->dmaRead(iter.addr + totalRead, read, buffer, dmaHandler,
-                            readContext);
+                            readContext, sid, ssid);
         totalRead = read;
       }
 
@@ -451,7 +451,7 @@ void SGL::read(uint64_t offset, uint64_t length, uint8_t *buffer,
           readContext->counter++;
           pInterface->dmaRead(iter.addr, read,
                               buffer ? buffer + totalRead : NULL, dmaHandler,
-                              readContext);
+                              readContext, sid, ssid);
         }
 
         totalRead += read;
@@ -469,7 +469,7 @@ void SGL::read(uint64_t offset, uint64_t length, uint8_t *buffer,
         if (!iter.ignore) {
           readContext->counter++;
           pInterface->dmaRead(iter.addr + totalRead, read, buffer, dmaHandler,
-                              readContext);
+                              readContext, sid, ssid);
         }
 
         totalRead = read;
