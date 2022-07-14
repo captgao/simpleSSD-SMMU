@@ -35,7 +35,7 @@ FIFOEntry::FIFOEntry()
       context(nullptr) {}
 
 FIFOEntry::FIFOEntry(uint64_t a, uint64_t s, uint8_t *b, DMAFunction &f,
-                     void *c)
+                     void *c, uint32_t _sid, uint32_t _ssid)
     : last(true),
       id(0),
       addr(a),
@@ -45,6 +45,8 @@ FIFOEntry::FIFOEntry(uint64_t a, uint64_t s, uint8_t *b, DMAFunction &f,
       insertBeginAt(0),
       insertEndAt(0),
       func(f),
+      sid(_sid),
+      ssid(_ssid),
       context(c) {}
 
 ReadEntry::ReadEntry() : id(0), insertEndAt(0), dmaEndAt(0), latency(0) {}
@@ -183,7 +185,7 @@ void FIFO::transferWrite() {
 
   // Begin transfer
   upstream->dmaWrite(iter.addr, iter.size, iter.buffer,
-                     writeQueue.transferDone);
+                     writeQueue.transferDone, NULL, iter.sid, iter.ssid);
 }
 
 void FIFO::transferWriteDone() {
@@ -274,7 +276,7 @@ void FIFO::transferRead() {
 
   // When all data is read to FIFO, call handler
   upstream->dmaRead(iter->addr, iter->size, iter->buffer,
-                    readQueue.transferDone);
+                    readQueue.transferDone, NULL, iter->sid, iter->ssid);
 
   if (!scheduled(readQueue.beginTransfer)) {
     schedule(readQueue.beginTransfer,
@@ -393,27 +395,27 @@ void FIFO::insertReadDoneNext() {
 }
 
 void FIFO::dmaRead(uint64_t addr, uint64_t size, uint8_t *buffer,
-                   DMAFunction &func, void *context) {
+                   DMAFunction &func, void *context, uint32_t sid, uint32_t ssid) {
   if (size == 0) {
     warn("FIFO: zero-size DMA read request. Ignore.");
 
     return;
   }
 
-  readQueue.waitQueue.push_back(FIFOEntry(addr, size, buffer, func, context));
+  readQueue.waitQueue.push_back(FIFOEntry(addr, size, buffer, func, context, sid, ssid));
 
   transferRead();
 }
 
 void FIFO::dmaWrite(uint64_t addr, uint64_t size, uint8_t *buffer,
-                    DMAFunction &func, void *context) {
+                    DMAFunction &func, void *context, uint32_t sid, uint32_t ssid) {
   if (size == 0) {
     warn("FIFO: zero-size DMA write request. Ignore.");
 
     return;
   }
 
-  writeQueue.waitQueue.push_back(FIFOEntry(addr, size, buffer, func, context));
+  writeQueue.waitQueue.push_back(FIFOEntry(addr, size, buffer, func, context, sid, ssid));
 
   insertWrite();
 }

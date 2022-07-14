@@ -38,6 +38,18 @@ DMAInterface::DMAInterface(ConfigData &cfg, DMAFunction &f, void *c)
       allocate([this](uint64_t now) { initFunction(now, context); });
 }
 
+DMAInterface::DMAInterface(ConfigData &cfg, DMAFunction &f, void *c, uint32_t _sid, uint32_t _ssid)
+    : pInterface(cfg.pInterface),
+      initFunction(f),
+      callCounter(0),
+      context(c),
+      sid(_sid),
+      ssid(_ssid),
+      dmaHandler(commonDMAHandler) {
+  immediateEvent =
+      allocate([this](uint64_t now) { initFunction(now, context); });
+}
+
 DMAInterface::~DMAInterface() {}
 
 void DMAInterface::commonDMAHandler(uint64_t now, void *context) {
@@ -56,8 +68,8 @@ PRP::PRP() : addr(0), size(0) {}
 PRP::PRP(uint64_t address, uint64_t s) : addr(address), size(s) {}
 
 PRPList::PRPList(ConfigData &cfg, DMAFunction &f, void *c, uint64_t prp1,
-                 uint64_t prp2, uint64_t size)
-    : DMAInterface(cfg, f, c), totalSize(size), pagesize(cfg.memoryPageSize) {
+                 uint64_t prp2, uint64_t size, uint32_t sid, uint32_t ssid)
+    : DMAInterface(cfg, f, c, sid, ssid), totalSize(size), pagesize(cfg.memoryPageSize) {
   bool immediate = true;
   uint64_t prp1Size = getPRPSize(prp1);
   uint64_t prp2Size = getPRPSize(prp2);
@@ -216,7 +228,7 @@ void PRPList::read(uint64_t offset, uint64_t length, uint8_t *buffer,
         read = MIN(iter.size, length - totalRead);
         readContext->counter++;
         pInterface->dmaRead(iter.addr, read, buffer ? buffer + totalRead : NULL,
-                            dmaHandler, readContext);
+                            dmaHandler, readContext, sid, ssid);
         totalRead += read;
 
         if (totalRead == length) {
@@ -230,7 +242,7 @@ void PRPList::read(uint64_t offset, uint64_t length, uint8_t *buffer,
         read = MIN(iter.size - totalRead, length);
         readContext->counter++;
         pInterface->dmaRead(iter.addr + totalRead, read, buffer, dmaHandler,
-                            readContext);
+                            readContext, sid, ssid);
         totalRead = read;
       }
 
@@ -266,7 +278,7 @@ void PRPList::write(uint64_t offset, uint64_t length, uint8_t *buffer,
         writeContext->counter++;
         pInterface->dmaWrite(iter.addr, written,
                              buffer ? buffer + totalWritten : NULL, dmaHandler,
-                             writeContext);
+                             writeContext, sid, ssid);
         totalWritten += written;
 
         if (totalWritten == length) {
@@ -280,7 +292,7 @@ void PRPList::write(uint64_t offset, uint64_t length, uint8_t *buffer,
         written = MIN(iter.size - totalWritten, length);
         writeContext->counter++;
         pInterface->dmaWrite(iter.addr + totalWritten, written, buffer,
-                             dmaHandler, writeContext);
+                             dmaHandler, writeContext, sid, ssid);
         totalWritten = written;
       }
 
@@ -307,8 +319,8 @@ Chunk::Chunk() : addr(0), length(0), ignore(true) {}
 
 Chunk::Chunk(uint64_t a, uint32_t l, bool i) : addr(a), length(l), ignore(i) {}
 
-SGL::SGL(ConfigData &cfg, DMAFunction &f, void *c, uint64_t prp1, uint64_t prp2)
-    : DMAInterface(cfg, f, c), totalSize(0) {
+SGL::SGL(ConfigData &cfg, DMAFunction &f, void *c, uint64_t prp1, uint64_t prp2, uint32_t sid, uint32_t ssid)
+    : DMAInterface(cfg, f, c, sid, ssid), totalSize(0) {
   SGLDescriptor desc;
 
   // Create first SGL descriptor from PRP pointers
@@ -439,7 +451,7 @@ void SGL::read(uint64_t offset, uint64_t length, uint8_t *buffer,
           readContext->counter++;
           pInterface->dmaRead(iter.addr, read,
                               buffer ? buffer + totalRead : NULL, dmaHandler,
-                              readContext);
+                              readContext, sid, ssid);
         }
 
         totalRead += read;
@@ -457,7 +469,7 @@ void SGL::read(uint64_t offset, uint64_t length, uint8_t *buffer,
         if (!iter.ignore) {
           readContext->counter++;
           pInterface->dmaRead(iter.addr + totalRead, read, buffer, dmaHandler,
-                              readContext);
+                              readContext, sid, ssid);
         }
 
         totalRead = read;
@@ -497,7 +509,7 @@ void SGL::write(uint64_t offset, uint64_t length, uint8_t *buffer,
           writeContext->counter++;
           pInterface->dmaWrite(iter.addr, written,
                                buffer ? buffer + totalWritten : NULL,
-                               dmaHandler, writeContext);
+                               dmaHandler, writeContext, sid, ssid);
         }
 
         totalWritten += written;
@@ -515,7 +527,7 @@ void SGL::write(uint64_t offset, uint64_t length, uint8_t *buffer,
         if (!iter.ignore) {
           writeContext->counter++;
           pInterface->dmaWrite(iter.addr + totalWritten, written, buffer,
-                               dmaHandler, writeContext);
+                               dmaHandler, writeContext, sid, ssid);
         }
 
         totalWritten = written;

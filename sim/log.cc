@@ -121,8 +121,8 @@ void debugprint(LOG_ID id, const char *format, ...) {
     vsnprintf(str.data(), str.size(), format, copied);
     va_end(copied);
 
-    *(logger->outfile) << getTick() << ": " << logName[id] << ": " << str.data()
-                       << std::endl;
+    //*(logger->outfile) << getTick() << ": " << logName[id] << ": " << str.data()
+      //                 << std::endl;
   }
 }
 

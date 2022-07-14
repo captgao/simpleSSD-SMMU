@@ -54,8 +54,12 @@ struct FIFOEntry {
   DMAFunction func;
   void *context;
 
+  uint32_t sid;
+  uint32_t ssid;
+
   FIFOEntry();
-  FIFOEntry(uint64_t, uint64_t, uint8_t *, DMAFunction &, void *);
+  FIFOEntry(uint64_t, uint64_t, uint8_t *, DMAFunction &, void *
+    , uint32_t = 0, uint32_t = 0);
 };
 
 struct ReadEntry {
@@ -125,9 +129,9 @@ class FIFO : public DMAInterface {
   ~FIFO();
 
   void dmaRead(uint64_t, uint64_t, uint8_t *, DMAFunction &,
-               void * = nullptr) override;
+               void * = nullptr, uint32_t = 0, uint32_t = 0) override;
   void dmaWrite(uint64_t, uint64_t, uint8_t *, DMAFunction &,
-                void * = nullptr) override;
+                void * = nullptr, uint32_t = 0, uint32_t = 0) override;
 };
 
 }  // namespace SimpleSSD
